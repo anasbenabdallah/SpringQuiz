@@ -13,6 +13,9 @@ public class Quiz {
     private Long id;
 
     private String title;
+
+    private int durationInMinutes; // Duration of the quiz in minutes
+
     @JsonIgnoreProperties("quiz")
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Question> questions;
@@ -66,5 +69,12 @@ public class Quiz {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+    // Add getters and setters for this property
+    public int getDurationInMinutes() {
+        return durationInMinutes;
+    }
+    public void setDurationInMinutes(int durationInMinutes) {
+        this.durationInMinutes = durationInMinutes;
     }
 }

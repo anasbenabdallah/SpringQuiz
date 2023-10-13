@@ -4,6 +4,8 @@ import AddQuiz from '../components/AddQuiz.jsx'; // Ensure the correct path
 import QuizTaker from '../components/QuizTaker.jsx'; // Ensure the correct path
 import QuizList from '../components/Allquizes.jsx';
 import {  useNavigate } from 'react-router-dom';// Ensure the correct path
+import MenuIcons from './MenuIcons.jsx';  // Import MenuIcons
+
 
 // Import the background image from your assets
 import background from '../assets/background.jpg';
@@ -52,6 +54,7 @@ const Quiz = () => {
                 justifyContent: 'center',
             }}
         >
+            <MenuIcons />
             {selectedQuiz ? (
                 <QuizTaker
                     quiz={selectedQuiz}

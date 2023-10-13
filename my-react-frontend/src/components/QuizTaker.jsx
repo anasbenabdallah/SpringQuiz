@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Typography, Radio, RadioGroup, FormControlLabel, Button, Paper } from '@mui/material';
 import PropTypes from 'prop-types';
 
@@ -6,10 +6,27 @@ const QuizTaker = ({ quiz, onFinish }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState('');
     const [answers, setAnswers] = useState([]);
+    const [timeLeft, setTimeLeft] = useState(quiz.durationInMinutes * 60);
+    const payload = quiz.questions.map(question => ({
+        question: { id: question.id },
+        userResponse: parseInt(selectedOption)
+    }));// Convert minutes to seconds
+    useEffect(() => {
+        const timer = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                onFinish(0);  // You can handle this differently, maybe show a message that time's up!
+            } else {
+                setTimeLeft(prevTime => prevTime - 1);
+            }
+        }, 1000);
 
+        return () => clearInterval(timer);
+    }, [timeLeft]);
     if (!quiz || !quiz.questions || quiz.questions.length === 0) {
         return <Typography variant="h6">No questions available.</Typography>;
     }
+
 
     const handleNext = () => {
         // Collect answer
@@ -41,12 +58,7 @@ const QuizTaker = ({ quiz, onFinish }) => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    userName: user.employeename,
-                    quizTitle: quiz.title,
-                    score: finalScore,
-                    email: user.email
-                })
+                body: JSON.stringify(payload) // Send the payload array
             })
                 .then(response => response.json())
                 .then(data => {
@@ -74,6 +86,8 @@ const QuizTaker = ({ quiz, onFinish }) => {
             borderRadius: '15px',
             textAlign: 'center',
         }}>
+            <Typography variant="h6">{Math.floor(timeLeft / 60)}:{("0" + timeLeft % 60).slice(-2)}</Typography>
+
             <Typography variant="h5">{currentQuestion.questionTitle}</Typography>
             <RadioGroup style={{ color: 'white' }} value={selectedOption} onChange={e => setSelectedOption(e.target.value)}>
                 <FormControlLabel value="1" control={<Radio />} label={currentQuestion.option1} />
@@ -90,6 +104,10 @@ const QuizTaker = ({ quiz, onFinish }) => {
 
 QuizTaker.propTypes = {
     quiz: PropTypes.shape({
+        durationInMinutes: PropTypes.number.isRequired,
+        title: PropTypes.string.isRequired,
+
+
         questions: PropTypes.arrayOf(PropTypes.shape({
             id: PropTypes.number.isRequired,
             questionTitle: PropTypes.string.isRequired,

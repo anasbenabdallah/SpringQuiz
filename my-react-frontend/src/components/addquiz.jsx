@@ -14,6 +14,8 @@ const AddQuiz = ({ onSubmit }) => {
         category: '',
     }]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+// Before the Quiz Title TextField...
+    const [durationInMinutes, setDurationInMinutes] = useState('');
 
     const addQuestion = () => {
         setQuestions([...questions, {
@@ -35,7 +37,7 @@ const AddQuiz = ({ onSubmit }) => {
     const handleSubmit = async () => {
         try {
             // Create the quiz as before
-            const quizResponse = await axios.post('http://localhost:8090/api/quizzes', { title: quizTitle });
+            const quizResponse = await axios.post('http://localhost:8090/api/quizzes', { title: quizTitle , durationInMinutes});
             const quiz = quizResponse.data;
             if (!quiz.id) {
                 alert('Quiz not found or created successfully.');
@@ -85,6 +87,7 @@ const AddQuiz = ({ onSubmit }) => {
         <div>
             <Typography variant="h5">Add New Quiz</Typography>
             <TextField fullWidth margin="normal" label="Quiz Title" value={quizTitle} onChange={e => setQuizTitle(e.target.value)} />
+            <TextField fullWidth margin="normal" label="Duration in Minutes" value={durationInMinutes} onChange={e => setDurationInMinutes(e.target.value)} />
 
             <Typography variant="h6">Question {currentQuestionIndex + 1}</Typography>
             <TextField fullWidth margin="normal" label="Question Title" value={question.questionTitle} onChange={e => handleQuestionChange('questionTitle', e.target.value)} />
